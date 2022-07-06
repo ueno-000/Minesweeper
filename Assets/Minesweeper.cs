@@ -7,7 +7,7 @@ public class Minesweeper : MonoBehaviour
     private int _rows = 1;
 
     [SerializeField]
-    private int _columns = 1;
+    private int _columns;
 
     [SerializeField]
     private int _mineCount = 1;
@@ -33,6 +33,7 @@ public class Minesweeper : MonoBehaviour
         }
 
         var _cells = new Cell[_rows, _columns];
+
         for (var r = 0; r < _rows; r++)
         {
             for (var c = 0; c < _columns; c++)
@@ -45,10 +46,29 @@ public class Minesweeper : MonoBehaviour
 
         for (var i = 0; i < _mineCount; i++)
         {
-            var r = Random.Range(0, _rows);
-            var c = Random.Range(0, _columns);
-            var cell = _cells[r, c];
+            Mine(_cells);
+        }
+    }
+
+    /// <summary>ínóãê›íuèàóù</summary>
+    /// <param name="_cells"></param>
+    private void Mine(Cell[,] cells)
+    {
+        var r = Random.Range(0, _rows);
+        var c = Random.Range(0, _columns);
+        var cell = cells[r, c];
+        if (cell.GetComponent<Cell>().CellState != CellState.Mine)
+        {
             cell.CellState = CellState.Mine;
         }
+        else
+        {
+            Mine(cells);
+        }
+    }
+
+    void MineCheck()
+    {
+        
     }
 }
