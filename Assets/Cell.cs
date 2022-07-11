@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
+
 public enum CellState
 {
     None = 0, // ‹óƒZƒ‹
@@ -24,6 +25,13 @@ public class Cell : MonoBehaviour
     private Text _view = null;
 
     [SerializeField]
+    private Image _cover = null;
+
+    [SerializeField]
+    private Text _mark = null;
+
+
+    [SerializeField]
     public CellState _cellState = CellState.None;
     public CellState CellState
     {
@@ -34,6 +42,7 @@ public class Cell : MonoBehaviour
             OnCellStateChanged();
         }
     }
+
 
     private void OnValidate()
     {
@@ -59,4 +68,5 @@ public class Cell : MonoBehaviour
             _view.color = Color.blue;
         }
     }
+
 }
