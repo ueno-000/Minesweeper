@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class Minesweeper : MonoBehaviour
+public class Minesweeper : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField]
     private int _rows = 1;
@@ -188,5 +189,36 @@ public class Minesweeper : MonoBehaviour
         }
     }
 
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        var cell = eventData.pointerCurrentRaycast.gameObject;
 
+        // クリックされたセルの行番号と列番号取得
+        if (GetCellPosition(cell) is { } pt)
+        {
+            Debug.Log($"Selected: {pt.Row}, {pt.Column}");
+        }
+    }
+
+    /// <summary>
+    /// セルの行番号と列番号を取得する。
+    /// </summary>
+    /// <param name="cell">調べたいセル。</param>
+    /// <returns>セルの行番号と列番号。見つからなければ null。</returns>
+    private (int Row, int Column)? GetCellPosition(GameObject cell)
+    {
+        var _cells = new Cell[_rows, _columns];
+
+        for (var r = 0; r < _cells.GetLength(0); r++)
+        {
+            for (var c = 0; c < _cells.GetLength(1); c++)
+            {
+                if (cell == _cells[r, c])
+                {
+                    return (r, c);
+                }
+            }
+        }
+        return null;
+    }
 }
