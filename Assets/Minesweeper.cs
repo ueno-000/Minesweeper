@@ -191,34 +191,30 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        var cell = eventData.pointerCurrentRaycast.gameObject;
+        var go = eventData.pointerCurrentRaycast.gameObject;
 
-        // クリックされたセルの行番号と列番号取得
-        if (GetCellPosition(cell) is { } pt)
+        // クリックされたオブジェクトが Cell を持つかどうか
+        var cell = go.GetComponent<Cell>();
+
+        switch (eventData.pointerId)
         {
-            Debug.Log($"Selected: {pt.Row}, {pt.Column}");
-        }
-    }
-
-    /// <summary>
-    /// セルの行番号と列番号を取得する。
-    /// </summary>
-    /// <param name="cell">調べたいセル。</param>
-    /// <returns>セルの行番号と列番号。見つからなければ null。</returns>
-    private (int Row, int Column)? GetCellPosition(GameObject cell)
-    {
-        var _cells = new Cell[_rows, _columns];
-
-        for (var r = 0; r < _cells.GetLength(0); r++)
-        {
-            for (var c = 0; c < _cells.GetLength(1); c++)
-            {
-                if (cell == _cells[r, c])
+            case -1://Left
+                if (cell != null)
                 {
-                    return (r, c);
+                    cell.Open(); // セルを開く
+                    if (cell.isMine)
+                    {
+                        // TODO: ゲームオーバー
+                    }
                 }
-            }
+                break;
+            case -2://Right
+                if (cell != null)
+                {
+                    cell.Mark(); // セルにマークを付ける
+                }
+                break;
+
         }
-        return null;
     }
 }
