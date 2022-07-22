@@ -27,10 +27,10 @@ public class Cell : MonoBehaviour
     [SerializeField]
     private Image _cover = null;
 
-    [SerializeField]
-    private GameObject _mark = null;
 
     public bool isMine = false;
+
+    public bool isOpen = false;
 
     [SerializeField]
     public CellState _cellState = CellState.None;
@@ -77,13 +77,9 @@ public class Cell : MonoBehaviour
 
     public void Open()
     {
+        isOpen = true;
         if (_cover == null) { return; }
         _cover.gameObject.SetActive(false);
     }
 
-    public void Mark()
-    {
-        if (_mark == null) { return; }
-        _mark.SetActive(true);
-    }
 }
