@@ -22,7 +22,7 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
     [SerializeField]
     private Cell _cellPrefab = null;
 
-    List<Cell> cells = new List<Cell>();
+    List<Cell> _cells = new List<Cell>();
 
     void Start()
     {
@@ -49,6 +49,8 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
                 _cells[r, c] = cell;
             }
         }
+
+        _mineCount = Mathf.Clamp(_mineCount, 0, _cells.Length);
 
         for (var i = 0; i < _mineCount; i++)
         {
@@ -196,25 +198,69 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
         // クリックされたオブジェクトが Cell を持つかどうか
         var cell = go.GetComponent<Cell>();
 
-        switch (eventData.pointerId)
+        if (cell != null)
         {
-            case -1://Left
-                if (cell != null)
+            if (IsAllClosed(_cells)) // すべてのセルが閉じている（最初のセルを開く）
+            {
+                while (cell.isMine) // 最初に開いたセルが地雷
                 {
-                    cell.Open(); // セルを開く
-                    if (cell.isMine)
-                    {
-                        // TODO: ゲームオーバー
-                    }
+                    // 再抽選
+                    InitializeMine(_cells); // すべてのセルを初期化しなおすメソッド
+                    Debug.Log("再抽選");
                 }
-                break;
-            case -2://Right
-                if (cell != null)
-                {
-                    cell.Mark(); // セルにマークを付ける
-                }
-                break;
+            }
+            cell.Open();
 
         }
+    }
+    /// <summary>
+    /// すべてのセルを指定の状態で初期化する。
+    /// </summary>
+    /// <param name="cells">セルの2次元配列。</param>
+    /// <param name="state">セル状態。</param>
+    private void Clear(List<Cell> cells, CellState state)
+    {
+        foreach (var cell in cells)
+        {
+            cell.CellState = state;
+        }
+    }
+    /// <summary>
+    /// すべてのセルを初期化して、指定した数の地雷をランダムに設置する。
+    /// </summary>
+    /// <param name="cells">セルの2次元配列。</param>
+    /// <param name="mineCount">設置する地雷数。</param>
+    private void InitializeMine(List<Cell> cells)
+    {
+        var _cells = new Cell[_rows, _columns];
+
+        // すべてのセルを None で初期化する。
+        Clear(cells, CellState.None);
+
+        for (var i = 0; i < _mineCount; i++)
+        {
+            Mine(_cells);
+        }
+
+        for (var r = 0; r < _rows; r++)
+        {
+            for (var c = 0; c < _columns; c++)
+            {
+                Check(_cells, r, c);
+            }
+        }
+    }
+    /// <summary>
+    /// すべてのセルが閉じているかどうか。
+    /// </summary>
+    /// <param name="cells">セルの2次元配列。</param>
+    /// <returns>すべてのセルが閉じていれば true。</returns>
+    private bool IsAllClosed(List<Cell> cells)
+    {
+        foreach (var cell in cells)
+        {
+            if (cell.isOpen) { return false; }
+        }
+        return true;
     }
 }
