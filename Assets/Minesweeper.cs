@@ -23,6 +23,7 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
     private Cell _cellPrefab = null;
 
     List<Cell> _cells = new List<Cell>();
+   
 
     void Start()
     {
