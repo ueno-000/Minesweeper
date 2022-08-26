@@ -27,10 +27,14 @@ public class Cell : MonoBehaviour
     [SerializeField]
     private Image _cover = null;
 
+    [SerializeField]
+    private Text _checker = null;
 
     public bool isMine = false;
 
     public bool isOpen = false;
+
+    public bool isCheck = false;
 
     [SerializeField]
     public CellState _cellState = CellState.None;
@@ -80,6 +84,21 @@ public class Cell : MonoBehaviour
         isOpen = true;
         if (_cover == null) { return; }
         _cover.gameObject.SetActive(false);
+    }
+
+    public void Check()
+    {
+        if (!isCheck)
+        {
+            _checker.gameObject.SetActive(true);
+            isCheck = true;
+        }
+        else
+        {
+            _checker.gameObject.SetActive(false);
+            isCheck = false; 
+        }
+
     }
 
 }
