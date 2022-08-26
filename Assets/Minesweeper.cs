@@ -199,7 +199,7 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
         // クリックされたオブジェクトが Cell を持つかどうか
         var cell = go.GetComponent<Cell>();
 
-        if (cell != null)
+        if (cell != null && eventData.button == PointerEventData.InputButton.Left)
         {
             if (IsAllClosed(_cells)) // すべてのセルが閉じている（最初のセルを開く）
             {
@@ -213,7 +213,23 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
             cell.Open();
 
         }
+        else if (eventData.button == PointerEventData.InputButton.Right)
+        {
+            Debug.Log("右クリック");
+        }
     }
+
+    //public void OnPointerClick(PointerEventData eventData)
+    //{
+    //    if (eventData.button == PointerEventData.InputButton.Left)
+    //    {
+    //        Debug.Log("左クリック");
+    //    }
+    //    else if (eventData.button == PointerEventData.InputButton.Right)
+    //    {
+    //        Debug.Log("右クリック");
+    //    }
+    //}
     /// <summary>
     /// すべてのセルを指定の状態で初期化する。
     /// </summary>
