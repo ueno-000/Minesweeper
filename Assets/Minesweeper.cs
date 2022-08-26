@@ -213,23 +213,12 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
             cell.Open();
 
         }
-        else if (eventData.button == PointerEventData.InputButton.Right)
+        else if (cell != null && eventData.button == PointerEventData.InputButton.Right)
         {
-            Debug.Log("右クリック");
+            cell.Check();
         }
     }
 
-    //public void OnPointerClick(PointerEventData eventData)
-    //{
-    //    if (eventData.button == PointerEventData.InputButton.Left)
-    //    {
-    //        Debug.Log("左クリック");
-    //    }
-    //    else if (eventData.button == PointerEventData.InputButton.Right)
-    //    {
-    //        Debug.Log("右クリック");
-    //    }
-    //}
     /// <summary>
     /// すべてのセルを指定の状態で初期化する。
     /// </summary>
