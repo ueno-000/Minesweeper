@@ -22,6 +22,7 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
     [SerializeField]
     private Cell _cellPrefab = null;
 
+    [SerializeField]
     List<Cell> _cells = new List<Cell>();
    
 
@@ -76,7 +77,7 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
         var r = UnityEngine.Random.Range(0, _rows);
         var c = UnityEngine.Random.Range(0, _columns);
         var cell = cells[r, c];
-        if (cell.GetComponent<Cell>().CellState != CellState.Mine)
+        if (cell.CellState != CellState.Mine)
         {
             cell.CellState = CellState.Mine;
         }
@@ -192,6 +193,10 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
         }
     }
 
+    /// <summary>
+    /// クリック処理
+    /// </summary>
+    /// <param name="eventData"></param>
     public void OnPointerClick(PointerEventData eventData)
     {
         var go = eventData.pointerCurrentRaycast.gameObject;
@@ -208,8 +213,14 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
                     // 再抽選
                     InitializeMine(_cells); // すべてのセルを初期化しなおすメソッド
                     Debug.Log("再抽選");
+
+                    if (!cell.isMine)
+                    {
+                        break;
+                    }
                 }
             }
+
             cell.Open();
 
         }
@@ -238,21 +249,21 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
     /// <param name="mineCount">設置する地雷数。</param>
     private void InitializeMine(List<Cell> cells)
     {
-        var _cells = new Cell[_rows, _columns];
+        var _newCells = new Cell[_rows,_columns];
 
         // すべてのセルを None で初期化する。
         Clear(cells, CellState.None);
 
         for (var i = 0; i < _mineCount; i++)
         {
-            Mine(_cells);
+            Mine(_newCells);
         }
 
         for (var r = 0; r < _rows; r++)
         {
             for (var c = 0; c < _columns; c++)
             {
-                Check(_cells, r, c);
+                Check(_newCells, r, c);
             }
         }
     }
@@ -265,7 +276,10 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
     {
         foreach (var cell in cells)
         {
-            if (cell.isOpen) { return false; }
+            if (cell.isOpen) 
+            {
+                return false;
+            }
         }
         return true;
     }
