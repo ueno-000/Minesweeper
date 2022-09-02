@@ -52,12 +52,8 @@ public class Cell : MonoBehaviour
     private void OnValidate()
     {
         OnCellStateChanged();
-
-        if (CellState == CellState.Mine)
-        {
-            isMine = true;
-        }
     }
+
 
     private void OnCellStateChanged()
     {
@@ -71,6 +67,7 @@ public class Cell : MonoBehaviour
         {
             _view.text = "X";
             _view.color = Color.red;
+            isMine = true;
         }
         else
         {
