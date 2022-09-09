@@ -11,7 +11,7 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
     private int _rows = 1;
 
     [SerializeField]
-    private int _columns;
+    private int _columns = 1;
 
     [SerializeField]
     private int _mineCount = 1;
@@ -22,9 +22,14 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
     [SerializeField]
     private Cell _cellPrefab = null;
 
-    [SerializeField]
-    List<Cell> _cells = new List<Cell>();
-   
+    private Cell[,] _cells;
+
+
+    private void OnValidate()
+    {
+        _rows = Mathf.Clamp(_rows, 1, 50);
+        _columns = Mathf.Clamp(_columns, 1, 50);
+    }
 
     void Start()
     {
@@ -40,13 +45,14 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
             _gridLayoutGroup.constraintCount = _rows;
         }
 
-        var _cells = new Cell[_rows, _columns];
+        _cells = new Cell[_rows, _columns];
 
         for (var r = 0; r < _rows; r++)
         {
             for (var c = 0; c < _columns; c++)
             {
                 var cell = Instantiate(_cellPrefab);
+
                 cell.transform.SetParent(parent);
                 _cells[r, c] = cell;
             }
@@ -223,6 +229,11 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
 
             cell.Open();
 
+            if(cell.isMine)
+            {
+                
+            }
+
         }
         else if (cell != null && eventData.button == PointerEventData.InputButton.Right)
         {
@@ -235,7 +246,7 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
     /// </summary>
     /// <param name="cells">セルの2次元配列。</param>
     /// <param name="state">セル状態。</param>
-    private void Clear(List<Cell> cells, CellState state)
+    private void Clear(Cell[,] cells, CellState state)
     {
         foreach (var cell in cells)
         {
@@ -247,23 +258,21 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
     /// </summary>
     /// <param name="cells">セルの2次元配列。</param>
     /// <param name="mineCount">設置する地雷数。</param>
-    private void InitializeMine(List<Cell> cells)
+    private void InitializeMine(Cell[,] cells)
     {
-        var _newCells = new Cell[_rows,_columns];
-
         // すべてのセルを None で初期化する。
         Clear(cells, CellState.None);
 
         for (var i = 0; i < _mineCount; i++)
         {
-            Mine(_newCells);
+            Mine(_cells);
         }
 
         for (var r = 0; r < _rows; r++)
         {
             for (var c = 0; c < _columns; c++)
             {
-                Check(_newCells, r, c);
+                Check(_cells, r, c);
             }
         }
     }
@@ -272,15 +281,17 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
     /// </summary>
     /// <param name="cells">セルの2次元配列。</param>
     /// <returns>すべてのセルが閉じていれば true。</returns>
-    private bool IsAllClosed(List<Cell> cells)
+    private bool IsAllClosed(Cell[,] cells)
     {
         foreach (var cell in cells)
         {
-            if (cell.isOpen) 
-            {
-                return false;
-            }
+            if (cell.isOpen) { return false; }
         }
         return true;
+    }
+
+    private void GameOver()
+    { 
+
     }
 }
