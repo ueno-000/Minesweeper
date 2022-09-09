@@ -11,7 +11,7 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
     private int _rows = 1;
 
     [SerializeField]
-    private int _columns;
+    private int _columns = 1;
 
     [SerializeField]
     private int _mineCount = 1;
@@ -22,8 +22,14 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
     [SerializeField]
     private Cell _cellPrefab = null;
 
-    List<Cell> _cells = new List<Cell>();
-   
+    private Cell[,] _cells;
+
+
+    private void OnValidate()
+    {
+        _rows = Mathf.Clamp(_rows, 1, 50);
+        _columns = Mathf.Clamp(_columns, 1, 50);
+    }
 
     void Start()
     {
@@ -39,13 +45,14 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
             _gridLayoutGroup.constraintCount = _rows;
         }
 
-        var _cells = new Cell[_rows, _columns];
+        _cells = new Cell[_rows, _columns];
 
         for (var r = 0; r < _rows; r++)
         {
             for (var c = 0; c < _columns; c++)
             {
                 var cell = Instantiate(_cellPrefab);
+
                 cell.transform.SetParent(parent);
                 _cells[r, c] = cell;
             }
@@ -76,7 +83,7 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
         var r = UnityEngine.Random.Range(0, _rows);
         var c = UnityEngine.Random.Range(0, _columns);
         var cell = cells[r, c];
-        if (cell.GetComponent<Cell>().CellState != CellState.Mine)
+        if (cell.CellState != CellState.Mine)
         {
             cell.CellState = CellState.Mine;
         }
@@ -192,6 +199,10 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
         }
     }
 
+    /// <summary>
+    /// クリック処理
+    /// </summary>
+    /// <param name="eventData"></param>
     public void OnPointerClick(PointerEventData eventData)
     {
         var go = eventData.pointerCurrentRaycast.gameObject;
@@ -208,9 +219,20 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
                     // 再抽選
                     InitializeMine(_cells); // すべてのセルを初期化しなおすメソッド
                     Debug.Log("再抽選");
+
+                    if (!cell.isMine)
+                    {
+                        break;
+                    }
                 }
             }
+
             cell.Open();
+
+            if(cell.isMine)
+            {
+                
+            }
 
         }
         else if (cell != null && eventData.button == PointerEventData.InputButton.Right)
@@ -224,7 +246,7 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
     /// </summary>
     /// <param name="cells">セルの2次元配列。</param>
     /// <param name="state">セル状態。</param>
-    private void Clear(List<Cell> cells, CellState state)
+    private void Clear(Cell[,] cells, CellState state)
     {
         foreach (var cell in cells)
         {
@@ -236,10 +258,8 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
     /// </summary>
     /// <param name="cells">セルの2次元配列。</param>
     /// <param name="mineCount">設置する地雷数。</param>
-    private void InitializeMine(List<Cell> cells)
+    private void InitializeMine(Cell[,] cells)
     {
-        var _cells = new Cell[_rows, _columns];
-
         // すべてのセルを None で初期化する。
         Clear(cells, CellState.None);
 
@@ -261,12 +281,17 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
     /// </summary>
     /// <param name="cells">セルの2次元配列。</param>
     /// <returns>すべてのセルが閉じていれば true。</returns>
-    private bool IsAllClosed(List<Cell> cells)
+    private bool IsAllClosed(Cell[,] cells)
     {
         foreach (var cell in cells)
         {
             if (cell.isOpen) { return false; }
         }
         return true;
+    }
+
+    private void GameOver()
+    { 
+
     }
 }
