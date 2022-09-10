@@ -65,13 +65,13 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
             Mine(_cells);
         }
 
-        for (var r = 0; r < _rows; r++)
-        {
-            for (var c = 0; c < _columns; c++)
-            {
-                Check(_cells, r, c);
-            }
-        }
+        //for (var r = 0; r < _rows; r++)
+        //{
+        //    for (var c = 0; c < _columns; c++)
+        //    {
+        //        Check(_cells, r, c);
+        //    }
+        //}
     }
 
 
@@ -89,7 +89,7 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
         }
         else
         {
-            Mine(cells);
+            //Mine(cells);
         }
     }
     /// <summary>
@@ -226,18 +226,21 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
                     }
                 }
             }
-
             cell.Open();
 
             if(cell.isMine)
             {
-                
+                GameOver();
             }
-
         }
         else if (cell != null && eventData.button == PointerEventData.InputButton.Right)
         {
             cell.Check();
+
+            if (!cell.isMine)
+            {
+                GameOver();
+            }
         }
     }
 
@@ -290,8 +293,11 @@ public class Minesweeper : MonoBehaviour, IPointerClickHandler
         return true;
     }
 
+    /// <summary>
+    /// ゲームオーバー処理
+    /// </summary>
     private void GameOver()
-    { 
-
+    {
+        Debug.Log("GameOver");
     }
 }
